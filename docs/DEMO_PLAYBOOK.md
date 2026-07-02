@@ -26,14 +26,19 @@ Before recording:
 1. Start the bot:
 
    ```powershell
+   cd "D:\Coding Compete\2026-07-13_Slack-Agent-Builder-Challenge"
+   $py="C:\Users\moscr\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe"
    $env:PYTHONPATH="src"
-   python -m labsignal.slack_app
+   & $py -m labsignal.slack_app
    ```
 
 2. Keep a terminal tab ready with:
 
    ```powershell
-   python -m labsignal.mcp_server
+   cd "D:\Coding Compete\2026-07-13_Slack-Agent-Builder-Challenge"
+   $py="C:\Users\moscr\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe"
+   $env:PYTHONPATH="src"
+   & $py -m labsignal.mcp_server
    ```
 
 3. Open Slack to `#general`.
@@ -123,4 +128,3 @@ trackers, or institutional knowledge bases."
 - Do not spend time explaining setup forms.
 - Do not show repeated duplicate test messages.
 - Do not claim LLM reasoning if the current implementation is deterministic.
-
