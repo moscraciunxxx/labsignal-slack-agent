@@ -22,7 +22,7 @@ def handle_mention(event, say):
 @app.command("/labsignal")
 def handle_command(ack, respond, command):
     ack()
-    respond(agent.respond(command.get("text", "")))
+    respond({"response_type": "in_channel", "text": agent.respond(command.get("text", ""))})
 
 
 def main() -> None:
@@ -33,4 +33,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
