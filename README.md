@@ -49,50 +49,7 @@ python -m labsignal.cli "protocol ca1 neuropixels"
 python -m labsignal.cli "demo"
 ```
 
-## Slack Setup
 
-1. Join the Slack Agent Builder Challenge on Devpost.
-2. Join the Slack Developer Program and provision the free developer sandbox.
-3. Use the hackathon sandbox code from the FAQ: `SABC-7X2K-M9PL-4QFN`.
-4. Create a Slack app in the sandbox.
-5. Enable Socket Mode.
-6. Add bot scopes:
-   - `app_mentions:read`
-   - `chat:write`
-   - `commands`
-7. Add a slash command:
-   - Command: `/labsignal`
-   - Request URL: any placeholder URL if Socket Mode is enabled
-8. Install the app to the sandbox.
-9. Put tokens in `.env`:
-
-```env
-SLACK_BOT_TOKEN=xoxb-your-token
-SLACK_APP_TOKEN=xapp-your-token
-```
-
-Run the bot:
-
-```bash
-$env:PYTHONPATH="src"
-python -m labsignal.slack_app
-```
-
-## MCP Server
-
-```bash
-$env:PYTHONPATH="src"
-python -m labsignal.mcp_server
-```
-
-Exposed tools:
-
-- `search_protocols`
-- `extract_action_items`
-- `summarize_update`
-- `detect_risks`
-- `build_research_brief`
-- `plan_experiment`
 
 ## Docker
 
@@ -101,11 +58,7 @@ docker build -t labsignal .
 docker run --rm --env-file .env labsignal
 ```
 
-## Submission Plan
-
-Track: **New Slack Agent**
 
 Primary technology: **MCP server integration**
 
-See `docs/SUBMISSION.md` for the Devpost draft, `docs/DEMO_PLAYBOOK.md` for the
-recording script, and `docs/ARCHITECTURE.md` for the architecture diagram.
+See `docs/ARCHITECTURE.md` for the architecture diagram.
