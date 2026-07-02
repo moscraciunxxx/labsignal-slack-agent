@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 
-from .knowledge import search_protocols
+from .knowledge import find_experiment_plan, search_protocols
 
 
 def extract_action_items(text: str) -> list[dict[str, str]]:
@@ -36,6 +36,68 @@ def summarize_update(text: str) -> str:
     return first[:260].strip()
 
 
+def detect_risks(text: str) -> list[dict[str, str]]:
+    checks = [
+        (
+            "Signal quality",
+            r"\b(saturated|flatline|noisy|artifact|drift|motion|high[- ]variance)\b",
+            "Review QC before downstream analysis.",
+        ),
+        (
+            "Missing owner",
+            r"\b(todo|needs to|should|action)\b(?!.*\b[A-Z][a-z]+\b)",
+            "Assign an explicit owner.",
+        ),
+        (
+            "Schedule risk",
+            r"\b(delayed|blocked|waiting|late|missed|re-run|rerun)\b",
+            "Decide whether the session needs escalation or re-planning.",
+        ),
+        (
+            "Data governance",
+            r"\b(consent|human|patient|privacy|de-identify|restricted)\b",
+            "Confirm sharing and de-identification constraints.",
+        ),
+        (
+            "Reproducibility",
+            r"\b(manual|spreadsheet|local path|notebook only|unversioned)\b",
+            "Capture scripts, parameters, and environment details.",
+        ),
+    ]
+    risks: list[dict[str, str]] = []
+    for label, pattern, mitigation in checks:
+        if re.search(pattern, text, flags=re.I):
+            risks.append({"risk": label, "mitigation": mitigation})
+    return risks
+
+
+def build_research_brief(text: str) -> dict[str, object]:
+    protocols = search_protocols(text, limit=2)
+    return {
+        "summary": summarize_update(text),
+        "actions": extract_action_items(text),
+        "risks": detect_risks(text),
+        "protocols": protocols,
+    }
+
+
+def plan_experiment(query: str) -> dict[str, object]:
+    plan = find_experiment_plan(query)
+    if plan is None:
+        return {
+            "id": "general-research-handoff",
+            "title": "General research handoff checklist",
+            "steps": [
+                "State the scientific question and current decision point.",
+                "List dataset/session IDs and quality concerns.",
+                "Assign owners and deadlines for next actions.",
+                "Link relevant protocol or SOP context.",
+                "Record unresolved risks before work continues.",
+            ],
+        }
+    return plan
+
+
 def format_actions(items: list[dict[str, str]]) -> str:
     if not items:
         return "No clear action items found. Try including an owner, task, and deadline."
@@ -51,4 +113,47 @@ def format_protocols(results: list[dict[str, str]]) -> str:
     lines = ["*Protocol matches*"]
     for result in results:
         lines.append(f"- *{result['title']}* `({result['id']})`: {result['body']}")
+    return "\n".join(lines)
+
+
+def format_risks(risks: list[dict[str, str]]) -> str:
+    if not risks:
+        return "*Risks*\n- No obvious QC, schedule, governance, or reproducibility risks detected."
+    lines = ["*Risks and mitigations*"]
+    for item in risks:
+        lines.append(f"- *{item['risk']}*: {item['mitigation']}")
+    return "\n".join(lines)
+
+
+def format_plan(plan: dict[str, object]) -> str:
+    lines = [f"*{plan['title']}*"]
+    for idx, step in enumerate(plan["steps"], start=1):
+        lines.append(f"{idx}. {step}")
+    return "\n".join(lines)
+
+
+def format_research_brief(brief: dict[str, object]) -> str:
+    lines = ["*LabSignal research brief*", f"*Summary:* {brief['summary']}"]
+
+    actions = brief["actions"]
+    if actions:
+        lines.append("*Action items*")
+        for item in actions:
+            lines.append(f"- *{item['owner']}*: {item['task']} _Deadline: {item['deadline']}._")
+    else:
+        lines.append("*Action items*\n- No clear owner/task/deadline pairs found.")
+
+    risks = brief["risks"]
+    if risks:
+        lines.append("*Risks*")
+        for item in risks:
+            lines.append(f"- *{item['risk']}*: {item['mitigation']}")
+    else:
+        lines.append("*Risks*\n- No obvious blockers detected.")
+
+    protocols = brief["protocols"]
+    if protocols:
+        lines.append("*Relevant protocols*")
+        for result in protocols:
+            lines.append(f"- *{result['title']}* `({result['id']})`")
     return "\n".join(lines)

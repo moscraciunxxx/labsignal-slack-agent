@@ -5,8 +5,9 @@ Target length: 2:30 to 3:00.
 ## Judge-facing thesis
 
 LabSignal is a Slack-native research operations agent for neuroscience teams. It
-turns messy lab-channel messages into structured action items, protocol lookups,
-and concise updates using a Slack bot backed by MCP-compatible tools.
+turns messy lab-channel messages into structured handoffs, action items, risk
+flags, experiment plans, protocol lookups, and concise updates using a Slack bot
+backed by MCP-compatible tools.
 
 ## What judges score
 
@@ -55,20 +56,33 @@ notes, and protocol questions in Slack. The problem is that action items and
 protocol context get buried. LabSignal turns those messages into structured
 research operations support without leaving Slack."
 
-### 0:20-0:55 - Action extraction
+### 0:20-0:55 - Research brief
 
 Paste:
 
 ```text
-/labsignal actions Alice will QC CA1 Neuropixels recordings by Friday. Bob should update the SOP before next week. Maya needs to export rejected channel IDs today.
+/labsignal brief Alice will QC CA1 Neuropixels recordings by Friday. Two channels are saturated and the session may need a re-run. Bob should update the SOP before next week. Maya needs to export rejected channel IDs today.
 ```
 
 Say:
 
-"The agent extracts owners, tasks, and deadlines directly from ordinary lab
-messages."
+"The agent turns an ordinary lab update into a research handoff: summary,
+actions, risk flags, and relevant protocols."
 
-### 0:55-1:25 - Protocol lookup
+### 0:55-1:20 - Experiment planning
+
+Paste:
+
+```text
+/labsignal plan ca1 neuropixels qc
+```
+
+Say:
+
+"It can generate workflow checklists for common neuroscience operations, keeping
+the next steps inside Slack."
+
+### 1:20-1:45 - Protocol lookup
 
 Paste:
 
@@ -78,21 +92,8 @@ Paste:
 
 Say:
 
-"It can also surface protocol knowledge. This is implemented as a local tool,
-which is the same capability exposed through the MCP server."
-
-### 1:25-1:55 - Summary flow
-
-Paste:
-
-```text
-/labsignal summarize Today we finished CA1 recordings for cohort B. Two probes had saturated channels and one session needs re-running. Alice will QC the recordings by Friday, and Bob will update the SOP before next week.
-```
-
-Say:
-
-"For noisy status updates, the agent gives a concise summary so the channel
-stays usable."
+"It also surfaces protocol knowledge. These are deterministic tools, and the
+same capabilities are exposed through the MCP server."
 
 ### 1:55-2:25 - Technical proof
 
@@ -105,8 +106,8 @@ Show:
 Say:
 
 "The Slack surface is app mentions and slash commands. The reusable tool layer is
-also exposed as MCP: search protocols, extract action items, and summarize
-updates."
+also exposed as MCP: search protocols, extract action items, summarize updates,
+detect risks, build briefs, and plan experiments."
 
 ### 2:25-2:55 - Impact and close
 

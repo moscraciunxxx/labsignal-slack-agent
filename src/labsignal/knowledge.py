@@ -32,9 +32,69 @@ PROTOCOLS = [
     },
 ]
 
+STOPWORDS = {
+    "and",
+    "are",
+    "before",
+    "for",
+    "from",
+    "need",
+    "needs",
+    "should",
+    "that",
+    "the",
+    "this",
+    "today",
+    "will",
+    "with",
+}
+
+EXPERIMENT_PLANS = [
+    {
+        "id": "ca1-neuropixels",
+        "title": "CA1 Neuropixels session checklist",
+        "tags": {"ca1", "neuropixels", "hippocampus", "recording", "qc"},
+        "steps": [
+            "Confirm animal ID, cohort, probe map, and task condition before recording.",
+            "Run impedance/probe health check and note any suspect channels.",
+            "Record a short baseline segment and verify theta-band signal quality.",
+            "After acquisition, flag saturated, flatline, and high-variance channels.",
+            "Export rejected channel IDs and link them to the session metadata.",
+        ],
+    },
+    {
+        "id": "two-photon-calcium",
+        "title": "Two-photon calcium imaging checklist",
+        "tags": {"two-photon", "calcium", "imaging", "motion", "suite2p"},
+        "steps": [
+            "Verify field of view, laser power, frame rate, and imaging depth.",
+            "Capture a stable baseline period before the behavioral task starts.",
+            "Run rigid motion correction and inspect framewise displacement.",
+            "Use non-rigid correction only when local drift remains visible.",
+            "Export ROI QC notes with inclusion and exclusion criteria.",
+        ],
+    },
+    {
+        "id": "open-science-release",
+        "title": "Open science release checklist",
+        "tags": {"release", "data", "paper", "reproducibility", "sharing"},
+        "steps": [
+            "Confirm consent, privacy, and institutional sharing constraints.",
+            "De-identify metadata and remove internal-only paths or credentials.",
+            "Publish analysis scripts with pinned dependencies and a quickstart.",
+            "Add a data dictionary and explain exclusion criteria.",
+            "Run a clean-room reproduction check from the README.",
+        ],
+    },
+]
+
 
 def search_protocols(query: str, limit: int = 3) -> list[dict[str, str]]:
-    words = {w.strip(".,:;!?()[]").lower() for w in query.split() if len(w) > 2}
+    words = {
+        w.strip(".,:;!?()[]").lower()
+        for w in query.split()
+        if len(w) > 2 and w.strip(".,:;!?()[]").lower() not in STOPWORDS
+    }
     scored = []
     for item in PROTOCOLS:
         haystack = set(item["title"].lower().split()) | item["tags"] | set(item["body"].lower().split())
@@ -47,3 +107,20 @@ def search_protocols(query: str, limit: int = 3) -> list[dict[str, str]]:
         for _, item in scored[:limit]
     ]
 
+
+def find_experiment_plan(query: str) -> dict[str, object] | None:
+    words = {
+        w.strip(".,:;!?()[]").lower()
+        for w in query.split()
+        if len(w) > 2 and w.strip(".,:;!?()[]").lower() not in STOPWORDS
+    }
+    scored = []
+    for item in EXPERIMENT_PLANS:
+        haystack = set(item["title"].lower().split()) | item["tags"]
+        score = len(words & haystack)
+        if score:
+            scored.append((score, item))
+    if not scored:
+        return None
+    scored.sort(key=lambda row: row[0], reverse=True)
+    return scored[0][1]

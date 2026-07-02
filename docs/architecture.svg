@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
   <title id="title">LabSignal architecture</title>
-  <desc id="desc">Slack slash commands and mentions flow through a Socket Mode app into the LabSignal agent, then to local tools and an MCP server.</desc>
+  <desc id="desc">Slack slash commands and mentions flow through a Socket Mode app into the LabSignal agent, then to research operation tools and an MCP server.</desc>
   <defs>
     <style>
       .bg { fill: #f7f8fa; }
@@ -10,11 +10,11 @@
       .tool { fill: #2e7d32; }
       .mcp { fill: #5b3cc4; }
       .text { fill: #1d1c1d; font-family: Arial, sans-serif; font-size: 22px; font-weight: 700; }
-      .small { fill: #454245; font-family: Arial, sans-serif; font-size: 16px; }
-      .white { fill: #ffffff; font-family: Arial, sans-serif; font-size: 20px; font-weight: 700; }
+      .small { fill: #454245; font-family: Arial, sans-serif; font-size: 15px; }
+      .white { fill: #ffffff; font-family: Arial, sans-serif; font-size: 19px; font-weight: 700; }
       .whiteSmall { fill: #ffffff; font-family: Arial, sans-serif; font-size: 15px; font-weight: 700; }
       .arrow { stroke: #454245; stroke-width: 3; fill: none; marker-end: url(#arrowhead); stroke-linecap: square; stroke-linejoin: round; }
-      .bus { stroke: #8b96a8; stroke-width: 3; fill: none; stroke-linecap: square; }
+      .bus { stroke: #8b96a8; stroke-width: 3; fill: none; stroke-linecap: square; stroke-linejoin: round; }
       .label { fill: #454245; font-family: Arial, sans-serif; font-size: 14px; font-weight: 700; }
     </style>
     <marker id="arrowhead" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="strokeWidth">
@@ -22,68 +22,74 @@
     </marker>
   </defs>
 
-  <rect class="bg" x="0" y="0" width="1200" height="680"/>
+  <rect class="bg" x="0" y="0" width="1200" height="700"/>
   <text class="text" x="64" y="58">LabSignal: Slack Research Ops Agent</text>
-  <text class="small" x="64" y="88">Slack-native workflow support with MCP-compatible tools</text>
+  <text class="small" x="64" y="88">Slack-native lab handoffs with MCP-compatible tools</text>
 
-  <!-- Top row -->
-  <rect class="panel" x="64" y="135" width="260" height="150" rx="8"/>
-  <rect class="slack" x="84" y="157" width="220" height="62" rx="6"/>
-  <text class="white" x="113" y="195">Slack Surface</text>
-  <text class="small" x="92" y="247">/labsignal command</text>
-  <text class="small" x="92" y="271">@LabSignal mentions</text>
+  <rect class="panel" x="64" y="130" width="260" height="150" rx="8"/>
+  <rect class="slack" x="84" y="152" width="220" height="62" rx="6"/>
+  <text class="white" x="113" y="190">Slack Surface</text>
+  <text class="small" x="92" y="242">/labsignal command</text>
+  <text class="small" x="92" y="266">@LabSignal mentions</text>
 
-  <rect class="panel" x="470" y="135" width="260" height="150" rx="8"/>
-  <rect class="agent" x="490" y="157" width="220" height="62" rx="6"/>
-  <text class="white" x="520" y="195">Socket Mode App</text>
-  <text class="small" x="498" y="247">Slack Bolt for Python</text>
-  <text class="small" x="498" y="271">No public webhook required</text>
+  <rect class="panel" x="470" y="130" width="260" height="150" rx="8"/>
+  <rect class="agent" x="490" y="152" width="220" height="62" rx="6"/>
+  <text class="white" x="520" y="190">Socket Mode App</text>
+  <text class="small" x="498" y="242">Slack Bolt for Python</text>
+  <text class="small" x="498" y="266">No public webhook required</text>
 
-  <rect class="panel" x="876" y="135" width="260" height="150" rx="8"/>
-  <rect class="agent" x="896" y="157" width="220" height="62" rx="6"/>
-  <text class="white" x="930" y="195">LabSignalAgent</text>
-  <text class="small" x="904" y="247">Intent routing</text>
-  <text class="small" x="904" y="271">Slack-formatted responses</text>
+  <rect class="panel" x="876" y="130" width="260" height="150" rx="8"/>
+  <rect class="agent" x="896" y="152" width="220" height="62" rx="6"/>
+  <text class="white" x="930" y="190">LabSignalAgent</text>
+  <text class="small" x="904" y="242">Intent routing</text>
+  <text class="small" x="904" y="266">Slack-formatted responses</text>
 
-  <path class="arrow" d="M324 210 H465"/>
-  <path class="arrow" d="M730 210 H871"/>
+  <path class="arrow" d="M324 205 H465"/>
+  <path class="arrow" d="M730 205 H871"/>
 
-  <!-- Routing bus -->
-  <path class="bus" d="M1006 285 V338 H600 V365"/>
-  <path class="bus" d="M600 338 H270 V365"/>
-  <path class="bus" d="M600 338 H935 V365"/>
-  <path class="arrow" d="M270 365 V388"/>
-  <path class="arrow" d="M600 365 V388"/>
-  <path class="arrow" d="M935 365 V388"/>
-  <text class="label" x="617" y="327">intent-selected tools</text>
+  <path class="bus" d="M1006 280 V330 H600"/>
+  <path class="bus" d="M600 330 H195 V363"/>
+  <path class="bus" d="M600 330 H460 V363"/>
+  <path class="bus" d="M600 330 H725 V363"/>
+  <path class="bus" d="M600 330 H990 V363"/>
+  <path class="arrow" d="M195 363 V388"/>
+  <path class="arrow" d="M460 363 V388"/>
+  <path class="arrow" d="M725 363 V388"/>
+  <path class="arrow" d="M990 363 V388"/>
+  <text class="label" x="615" y="319">intent-selected research tools</text>
 
-  <!-- Tool row -->
-  <rect class="panel" x="145" y="395" width="250" height="160" rx="8"/>
-  <rect class="tool" x="165" y="417" width="210" height="54" rx="6"/>
-  <text class="white" x="206" y="451">Action Tool</text>
-  <text class="small" x="171" y="497">Extract owner, task,</text>
-  <text class="small" x="171" y="521">and deadline</text>
+  <rect class="panel" x="80" y="395" width="230" height="155" rx="8"/>
+  <rect class="tool" x="100" y="416" width="190" height="52" rx="6"/>
+  <text class="white" x="132" y="449">Brief Builder</text>
+  <text class="small" x="106" y="494">Summary, actions, risks,</text>
+  <text class="small" x="106" y="518">and protocols in one reply</text>
 
-  <rect class="panel" x="475" y="395" width="250" height="160" rx="8"/>
-  <rect class="tool" x="495" y="417" width="210" height="54" rx="6"/>
-  <text class="white" x="532" y="451">Protocol Tool</text>
-  <text class="small" x="501" y="497">Search neuroscience</text>
-  <text class="small" x="501" y="521">protocol knowledge</text>
+  <rect class="panel" x="345" y="395" width="230" height="155" rx="8"/>
+  <rect class="tool" x="365" y="416" width="190" height="52" rx="6"/>
+  <text class="white" x="383" y="449">Action + Risk</text>
+  <text class="small" x="371" y="494">Owners, deadlines, QC,</text>
+  <text class="small" x="371" y="518">governance, blockers</text>
 
-  <rect class="panel" x="810" y="395" width="250" height="160" rx="8"/>
-  <rect class="tool" x="830" y="417" width="210" height="54" rx="6"/>
-  <text class="white" x="860" y="451">Summary Tool</text>
-  <text class="small" x="836" y="497">Condense noisy lab</text>
-  <text class="small" x="836" y="521">status updates</text>
+  <rect class="panel" x="610" y="395" width="230" height="155" rx="8"/>
+  <rect class="tool" x="630" y="416" width="190" height="52" rx="6"/>
+  <text class="white" x="646" y="449">Protocol + Plan</text>
+  <text class="small" x="636" y="494">Protocol search and</text>
+  <text class="small" x="636" y="518">experiment checklists</text>
 
-  <!-- MCP row -->
-  <path class="bus" d="M270 555 V592 H600"/>
-  <path class="bus" d="M600 555 V592"/>
-  <path class="bus" d="M935 555 V592 H600"/>
-  <path class="arrow" d="M600 592 V608"/>
+  <rect class="panel" x="875" y="395" width="230" height="155" rx="8"/>
+  <rect class="tool" x="895" y="416" width="190" height="52" rx="6"/>
+  <text class="white" x="927" y="449">Summarizer</text>
+  <text class="small" x="901" y="494">Condense noisy lab</text>
+  <text class="small" x="901" y="518">status updates</text>
 
-  <rect class="panel" x="300" y="608" width="600" height="52" rx="8"/>
-  <rect class="mcp" x="320" y="616" width="160" height="36" rx="6"/>
-  <text class="whiteSmall" x="350" y="639">MCP Server</text>
-  <text class="small" x="500" y="639">MCP-compatible clients can call the same tools</text>
+  <path class="bus" d="M195 550 V590 H600"/>
+  <path class="bus" d="M460 550 V590 H600"/>
+  <path class="bus" d="M725 550 V590 H600"/>
+  <path class="bus" d="M990 550 V590 H600"/>
+  <path class="arrow" d="M600 590 V610"/>
+
+  <rect class="panel" x="300" y="610" width="600" height="56" rx="8"/>
+  <rect class="mcp" x="320" y="620" width="160" height="36" rx="6"/>
+  <text class="whiteSmall" x="350" y="643">MCP Server</text>
+  <text class="small" x="500" y="643">MCP-compatible clients can call the same tools</text>
 </svg>
