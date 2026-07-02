@@ -39,17 +39,16 @@ def summarize_update(text: str) -> str:
 def format_actions(items: list[dict[str, str]]) -> str:
     if not items:
         return "No clear action items found. Try including an owner, task, and deadline."
-    lines = ["Action items:"]
+    lines = ["*Action items*"]
     for item in items:
-        lines.append(f"- {item['owner']}: {item['task']} Deadline: {item['deadline']}.")
+        lines.append(f"- *{item['owner']}*: {item['task']} _Deadline: {item['deadline']}._")
     return "\n".join(lines)
 
 
 def format_protocols(results: list[dict[str, str]]) -> str:
     if not results:
         return "I could not find a matching protocol in the local knowledge base."
-    lines = ["Protocol matches:"]
+    lines = ["*Protocol matches*"]
     for result in results:
-        lines.append(f"- {result['title']} ({result['id']}): {result['body']}")
+        lines.append(f"- *{result['title']}* `({result['id']})`: {result['body']}")
     return "\n".join(lines)
-
