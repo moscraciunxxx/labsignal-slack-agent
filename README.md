@@ -95,5 +95,5 @@ Track: **New Slack Agent**
 
 Primary technology: **MCP server integration**
 
-See `docs/SUBMISSION.md` for the Devpost draft, demo script, and asset checklist.
-
+See `docs/SUBMISSION.md` for the Devpost draft, `docs/DEMO_PLAYBOOK.md` for the
+recording script, and `docs/ARCHITECTURE.md` for the architecture diagram.
