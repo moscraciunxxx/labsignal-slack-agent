@@ -29,6 +29,7 @@ This project is designed for the no-spend path:
 - `@LabSignal plan ca1 neuropixels qc` returns a workflow checklist.
 - `@LabSignal protocol ca1 recording` searches a small neuroscience protocol
   knowledge base.
+- `@LabSignal demo` shows a polished judge-facing command menu.
 - `/labsignal` slash command support for fast demos.
 - MCP tools in `src/labsignal/mcp_server.py`.
 
@@ -45,6 +46,7 @@ python -m labsignal.cli "actions Alice will QC CA1 recordings by Friday. Bob sho
 python -m labsignal.cli "brief Alice will QC CA1 Neuropixels recordings by Friday. Two channels are saturated."
 python -m labsignal.cli "plan ca1 neuropixels qc"
 python -m labsignal.cli "protocol ca1 neuropixels"
+python -m labsignal.cli "demo"
 ```
 
 ## Slack Setup

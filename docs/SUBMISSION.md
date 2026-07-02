@@ -39,11 +39,12 @@ sandbox.
 ## Demo script
 
 1. Show the Slack sandbox and LabSignal installed.
-2. Run `/labsignal brief Alice will QC CA1 Neuropixels recordings by Friday. Two channels are saturated and the session may need a re-run. Bob should update the SOP before next week.`
-3. Show the structured summary, actions, risks, and relevant protocol.
-4. Run `/labsignal plan ca1 neuropixels qc`.
-5. Show the checklist, then run `/labsignal protocol ca1 neuropixels`.
-6. Explain the MCP tools.
+2. Run `/labsignal demo` to show the judge-facing capability menu.
+3. Run `/labsignal brief Alice will QC CA1 Neuropixels recordings by Friday. Two channels are saturated and the session may need a re-run. Bob should update the SOP before next week.`
+4. Show the structured summary, actions, risks, and relevant protocol.
+5. Run `/labsignal plan ca1 neuropixels qc`.
+6. Show the checklist, then run `/labsignal protocol ca1 neuropixels`.
+7. Explain the MCP tools.
 7. Close with the value: Slack-native research coordination that saves teams
    from losing action items and protocol context.
 

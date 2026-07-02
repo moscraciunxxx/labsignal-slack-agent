@@ -10,6 +10,7 @@ from .tools import (
     format_actions,
     format_plan,
     format_protocols,
+    format_demo_card,
     format_research_brief,
     format_risks,
     plan_experiment,
@@ -21,6 +22,9 @@ class LabSignalAgent:
     def respond(self, text: str) -> str:
         cleaned = _strip_bot_mention(text)
         lower = cleaned.lower()
+
+        if lower in {"demo", "help", "menu", ""}:
+            return format_demo_card()
 
         if lower.startswith("actions") or "action items" in lower:
             body = cleaned.partition(" ")[2] if lower.startswith("actions") else cleaned

@@ -46,6 +46,7 @@ Before recording:
 4. Open the GitHub repo or local README in another tab.
 5. Hide tokens, `.env`, personal notifications, and unrelated browser tabs.
 6. Increase browser zoom to 110% or 125% so Slack text reads well on video.
+7. Optional warm-up command: `/labsignal demo`.
 
 ## Demo script
 
@@ -68,6 +69,17 @@ Say:
 
 "The agent turns an ordinary lab update into a research handoff: summary,
 actions, risk flags, and relevant protocols."
+
+Optional setup shot before this command:
+
+```text
+/labsignal demo
+```
+
+Say:
+
+"The demo menu shows the core agent skills and the MCP tools exposed behind the
+Slack surface."
 
 ### 0:55-1:20 - Experiment planning
 

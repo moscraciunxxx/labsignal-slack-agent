@@ -14,6 +14,7 @@ def test_protocol_search():
     results = search_protocols("ca1 neuropixels qc")
     assert results
     assert results[0]["id"] == "ca1-neuropixels-qc"
+    assert [row["id"] for row in results] == ["ca1-neuropixels-qc"]
 
 
 def test_agent_actions_response():
@@ -23,9 +24,9 @@ def test_agent_actions_response():
 
 
 def test_agent_help_response():
-    response = LabSignalAgent().respond("hello")
-    assert "actions" in response
-    assert "protocol" in response
+    response = LabSignalAgent().respond("help")
+    assert "LabSignal demo menu" in response
+    assert "MCP tools" in response
 
 
 def test_risk_detection():

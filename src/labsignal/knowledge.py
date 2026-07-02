@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import re
+
 PROTOCOLS = [
     {
         "id": "ca1-neuropixels-qc",
@@ -90,16 +92,13 @@ EXPERIMENT_PLANS = [
 
 
 def search_protocols(query: str, limit: int = 3) -> list[dict[str, str]]:
-    words = {
-        w.strip(".,:;!?()[]").lower()
-        for w in query.split()
-        if len(w) > 2 and w.strip(".,:;!?()[]").lower() not in STOPWORDS
-    }
+    words = _keywords(query)
+    min_score = 2 if len(words) >= 2 else 1
     scored = []
     for item in PROTOCOLS:
-        haystack = set(item["title"].lower().split()) | item["tags"] | set(item["body"].lower().split())
+        haystack = _keywords(f"{item['title']} {' '.join(item['tags'])} {item['body']}")
         score = len(words & haystack)
-        if score:
+        if score >= min_score:
             scored.append((score, item))
     scored.sort(key=lambda row: row[0], reverse=True)
     return [
@@ -109,11 +108,7 @@ def search_protocols(query: str, limit: int = 3) -> list[dict[str, str]]:
 
 
 def find_experiment_plan(query: str) -> dict[str, object] | None:
-    words = {
-        w.strip(".,:;!?()[]").lower()
-        for w in query.split()
-        if len(w) > 2 and w.strip(".,:;!?()[]").lower() not in STOPWORDS
-    }
+    words = _keywords(query)
     scored = []
     for item in EXPERIMENT_PLANS:
         haystack = set(item["title"].lower().split()) | item["tags"]
@@ -124,3 +119,7 @@ def find_experiment_plan(query: str) -> dict[str, object] | None:
         return None
     scored.sort(key=lambda row: row[0], reverse=True)
     return scored[0][1]
+
+
+def _keywords(text: str) -> set[str]:
+    return {w for w in re.findall(r"[a-z0-9-]+", text.lower()) if len(w) > 2 and w not in STOPWORDS}

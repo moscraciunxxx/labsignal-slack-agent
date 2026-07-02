@@ -157,3 +157,20 @@ def format_research_brief(brief: dict[str, object]) -> str:
         for result in protocols:
             lines.append(f"- *{result['title']}* `({result['id']})`")
     return "\n".join(lines)
+
+
+def format_demo_card() -> str:
+    return "\n".join(
+        [
+            "*LabSignal demo menu*",
+            "*1. Research handoff*",
+            "`/labsignal brief Alice will QC CA1 Neuropixels recordings by Friday. Two channels are saturated and the session may need a re-run. Bob should update the SOP before next week.`",
+            "*2. Experiment plan*",
+            "`/labsignal plan ca1 neuropixels qc`",
+            "*3. Protocol lookup*",
+            "`/labsignal protocol ca1 neuropixels qc`",
+            "*4. Risk scan*",
+            "`/labsignal risks Two channels are saturated, the analysis notebook is unversioned, and data may include restricted human metadata.`",
+            "*MCP tools:* `search_protocols`, `extract_action_items`, `summarize_update`, `detect_risks`, `build_research_brief`, `plan_experiment`",
+        ]
+    )
