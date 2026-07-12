@@ -1,28 +1,45 @@
 display_information:
   name: LabSignal
-  description: Research ops agent for summaries, action items, and protocol lookup.
+  description: Reads your lab's Slack and turns it into handoffs, action items, and risk flags.
+  background_color: "#1f2d3d"
 features:
   bot_user:
     display_name: LabSignal
     always_online: true
+  assistant_view:
+    assistant_description: Turns lab chatter into handoffs, action items, risk flags, and protocol answers.
+    suggested_prompts:
+      - title: Hand off this channel
+        message: Read this channel and build me a handoff brief for the next shift.
+      - title: Who owes what?
+        message: Read this channel and list every open action item with its owner and deadline.
+      - title: What could invalidate the session?
+        message: Read this channel and flag any QC, schedule, governance, or reproducibility risks.
   slash_commands:
     - command: /labsignal
-      description: Ask LabSignal for actions, summaries, or protocols.
-      usage_hint: actions Alice will QC CA1 recordings by Friday.
+      description: Ask LabSignal about this channel's research updates.
+      usage_hint: build a handoff brief for the next shift
       should_escape: false
 oauth_config:
   scopes:
     bot:
       - app_mentions:read
+      - assistant:write
+      - channels:history
+      - groups:history
+      - im:history
       - chat:write
       - commands
+      - users:read
 settings:
   event_subscriptions:
     bot_events:
       - app_mention
+      - assistant_thread_started
+      - assistant_thread_context_changed
+      - message.im
   interactivity:
     is_enabled: true
   socket_mode_enabled: true
   org_deploy_enabled: false
   token_rotation_enabled: false
-

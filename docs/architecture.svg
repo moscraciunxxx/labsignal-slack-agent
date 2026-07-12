@@ -1,95 +1,121 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="760" viewBox="0 0 1240 760" role="img" aria-labelledby="title desc">
   <title id="title">LabSignal architecture</title>
-  <desc id="desc">Slack slash commands and mentions flow through a Socket Mode app into the LabSignal agent, then to research operation tools and an MCP server.</desc>
+  <desc id="desc">Slack messages reach a Bolt Socket Mode app, which asks Claude Opus 4.8 to answer. Every tool Claude can call is discovered from the LabSignal MCP server over a stdio session, including a read_slack_channel tool that reads the workspace back. Without an Anthropic key the app degrades to a deterministic keyword router.</desc>
+
   <defs>
     <style>
-      .bg { fill: #f7f8fa; }
-      .panel { fill: #ffffff; stroke: #d8dee8; stroke-width: 2; }
-      .slack { fill: #4a154b; }
-      .agent { fill: #1264a3; }
-      .tool { fill: #2e7d32; }
-      .mcp { fill: #5b3cc4; }
-      .text { fill: #1d1c1d; font-family: Arial, sans-serif; font-size: 22px; font-weight: 700; }
-      .small { fill: #454245; font-family: Arial, sans-serif; font-size: 15px; }
-      .white { fill: #ffffff; font-family: Arial, sans-serif; font-size: 19px; font-weight: 700; }
-      .whiteSmall { fill: #ffffff; font-family: Arial, sans-serif; font-size: 15px; font-weight: 700; }
-      .arrow { stroke: #454245; stroke-width: 3; fill: none; marker-end: url(#arrowhead); stroke-linecap: square; stroke-linejoin: round; }
-      .bus { stroke: #8b96a8; stroke-width: 3; fill: none; stroke-linecap: square; stroke-linejoin: round; }
-      .label { fill: #454245; font-family: Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .bg     { fill: #f7f8fa; }
+      .panel  { fill: #ffffff; stroke: #d8dee8; stroke-width: 2; }
+      .slack  { fill: #4a154b; }
+      .agent  { fill: #1264a3; }
+      .claude { fill: #c15f3c; }
+      .mcp    { fill: #5b3cc4; }
+      .tool   { fill: #2e7d32; }
+      .t      { font-family: "Segoe UI", Helvetica, Arial, sans-serif; }
+      .h1     { font-size: 26px; font-weight: 700; fill: #1d2330; }
+      .sub    { font-size: 14px; fill: #6b7684; }
+      .lbl    { font-size: 15px; font-weight: 600; fill: #ffffff; }
+      .lblsm  { font-size: 12px; fill: #e8ecf3; }
+      .cap    { font-size: 12.5px; fill: #4a5566; }
+      .capb   { font-size: 13px; font-weight: 600; fill: #1d2330; }
+      .monow  { font-family: Consolas, "SF Mono", Menlo, monospace; font-size: 12.5px; fill: #ffffff; }
+      .mono   { font-family: Consolas, "SF Mono", Menlo, monospace; font-size: 12.5px; fill: #2b3444; }
+      .flow   { stroke: #8892a4; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+      .flowb  { stroke: #5b3cc4; stroke-width: 3.5; fill: none; marker-end: url(#arrowp); }
+      .back   { stroke: #2e7d32; stroke-width: 2; fill: none; stroke-dasharray: 6 4; marker-end: url(#arrowg); }
+      .fall   { stroke: #b0b8c5; stroke-width: 2; fill: none; stroke-dasharray: 5 5; marker-end: url(#arrowm); }
     </style>
-    <marker id="arrowhead" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="strokeWidth">
-      <path d="M0,0 L10,4 L0,8 Z" fill="#454245"/>
-    </marker>
+    <marker id="arrow"  markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#8892a4"/></marker>
+    <marker id="arrowp" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#5b3cc4"/></marker>
+    <marker id="arrowg" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#2e7d32"/></marker>
+    <marker id="arrowm" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#b0b8c5"/></marker>
   </defs>
 
-  <rect class="bg" x="0" y="0" width="1200" height="700"/>
-  <text class="text" x="64" y="58">LabSignal: Slack Research Ops Agent</text>
-  <text class="small" x="64" y="88">Slack-native lab handoffs with MCP-compatible tools</text>
+  <rect class="bg" width="1240" height="760"/>
+  <text class="t h1" x="40" y="52">LabSignal</text>
+  <text class="t sub" x="40" y="76">A Slack agent for research labs. Every capability it has arrives over MCP.</text>
 
-  <rect class="panel" x="64" y="130" width="260" height="150" rx="8"/>
-  <rect class="slack" x="84" y="152" width="220" height="62" rx="6"/>
-  <text class="white" x="113" y="190">Slack Surface</text>
-  <text class="small" x="92" y="242">/labsignal command</text>
-  <text class="small" x="92" y="266">@LabSignal mentions</text>
+  <!-- Slack surfaces -->
+  <rect class="panel" x="40" y="152" width="250" height="180" rx="10"/>
+  <text class="t capb" x="60" y="180">Slack workspace</text>
+  <rect class="slack" x="60" y="194" width="210" height="34" rx="6"/>
+  <text class="t lbl" x="72" y="216">Assistant pane</text>
+  <rect class="slack" x="60" y="236" width="210" height="34" rx="6"/>
+  <text class="t lbl" x="72" y="258">@LabSignal (in-thread)</text>
+  <rect class="slack" x="60" y="278" width="210" height="34" rx="6"/>
+  <text class="t monow" x="72" y="300">/labsignal</text>
 
-  <rect class="panel" x="470" y="130" width="260" height="150" rx="8"/>
-  <rect class="agent" x="490" y="152" width="220" height="62" rx="6"/>
-  <text class="white" x="520" y="190">Socket Mode App</text>
-  <text class="small" x="498" y="242">Slack Bolt for Python</text>
-  <text class="small" x="498" y="266">No public webhook required</text>
+  <!-- Bolt -->
+  <rect class="agent" x="360" y="192" width="200" height="100" rx="10"/>
+  <text class="t lbl" x="380" y="224">Bolt (Socket Mode)</text>
+  <text class="t lblsm" x="380" y="248">LabSignalAgent</text>
+  <text class="t lblsm" x="380" y="268">no public URL needed</text>
+  <path class="flow" d="M292,242 L354,242"/>
 
-  <rect class="panel" x="876" y="130" width="260" height="150" rx="8"/>
-  <rect class="agent" x="896" y="152" width="220" height="62" rx="6"/>
-  <text class="white" x="930" y="190">LabSignalAgent</text>
-  <text class="small" x="904" y="242">Intent routing</text>
-  <text class="small" x="904" y="266">Slack-formatted responses</text>
+  <!-- Claude -->
+  <rect class="claude" x="640" y="182" width="230" height="120" rx="10"/>
+  <text class="t lbl" x="660" y="214">Claude Opus 4.8</text>
+  <text class="t lblsm" x="660" y="238">tool-use loop</text>
+  <text class="t lblsm" x="660" y="260">picks tools, chains them,</text>
+  <text class="t lblsm" x="660" y="280">decides when to stop</text>
+  <path class="flow" d="M562,242 L634,242"/>
 
-  <path class="arrow" d="M324 205 H465"/>
-  <path class="arrow" d="M730 205 H871"/>
+  <!-- fallback -->
+  <rect class="panel" x="920" y="182" width="280" height="120" rx="10"/>
+  <text class="t capb" x="940" y="212">Graceful degradation</text>
+  <text class="t cap" x="940" y="238">With no ANTHROPIC_API_KEY, or if</text>
+  <text class="t cap" x="940" y="256">the Claude call fails, LabSignal</text>
+  <text class="t cap" x="940" y="274">falls back to a deterministic</text>
+  <text class="t cap" x="940" y="292">keyword router. It still answers.</text>
+  <path class="fall" d="M876,242 L914,242"/>
 
-  <path class="bus" d="M1006 280 V330 H600"/>
-  <path class="bus" d="M600 330 H195 V363"/>
-  <path class="bus" d="M600 330 H460 V363"/>
-  <path class="bus" d="M600 330 H725 V363"/>
-  <path class="bus" d="M600 330 H990 V363"/>
-  <path class="arrow" d="M195 363 V388"/>
-  <path class="arrow" d="M460 363 V388"/>
-  <path class="arrow" d="M725 363 V388"/>
-  <path class="arrow" d="M990 363 V388"/>
-  <text class="label" x="615" y="319">intent-selected research tools</text>
+  <!-- MCP band -->
+  <rect class="mcp" x="360" y="404" width="510" height="76" rx="10"/>
+  <text class="t lbl" x="384" y="434">MCP stdio session</text>
+  <text class="t monow" x="384" y="460">list_tools() → 7 schemas · call_tool() → results</text>
+  <rect x="700" y="418" width="152" height="48" rx="6" fill="#ffffff"/>
+  <text class="t" x="716" y="438" font-size="15" font-weight="700" fill="#5b3cc4">REQUIRED</text>
+  <text class="t" x="716" y="458" font-size="12" font-weight="600" fill="#5b3cc4">TECHNOLOGY</text>
+  <path class="flowb" d="M700,306 L700,340 L615,340 L615,398"/>
+  <text class="t cap" x="628" y="366">tools discovered at startup,</text>
+  <text class="t cap" x="628" y="384">not hardcoded in the prompt</text>
 
-  <rect class="panel" x="80" y="395" width="230" height="155" rx="8"/>
-  <rect class="tool" x="100" y="416" width="190" height="52" rx="6"/>
-  <text class="white" x="132" y="449">Brief Builder</text>
-  <text class="small" x="106" y="494">Summary, actions, risks,</text>
-  <text class="small" x="106" y="518">and protocols in one reply</text>
+  <!-- MCP server + tools -->
+  <rect class="panel" x="360" y="520" width="510" height="196" rx="10"/>
+  <text class="t mono" x="384" y="548">labsignal.mcp_server</text>
+  <text class="t cap" x="384" y="568">Also runs standalone in Claude Desktop or any MCP client.</text>
 
-  <rect class="panel" x="345" y="395" width="230" height="155" rx="8"/>
-  <rect class="tool" x="365" y="416" width="190" height="52" rx="6"/>
-  <text class="white" x="383" y="449">Action + Risk</text>
-  <text class="small" x="371" y="494">Owners, deadlines, QC,</text>
-  <text class="small" x="371" y="518">governance, blockers</text>
+  <rect class="tool" x="384" y="584" width="228" height="30" rx="5"/>
+  <text class="t monow" x="394" y="604">read_slack_channel</text>
+  <rect class="tool" x="620" y="584" width="228" height="30" rx="5"/>
+  <text class="t monow" x="630" y="604">build_research_brief</text>
+  <rect class="tool" x="384" y="622" width="228" height="30" rx="5"/>
+  <text class="t monow" x="394" y="642">extract_action_items</text>
+  <rect class="tool" x="620" y="622" width="228" height="30" rx="5"/>
+  <text class="t monow" x="630" y="642">detect_risks</text>
+  <rect class="tool" x="384" y="660" width="228" height="30" rx="5"/>
+  <text class="t monow" x="394" y="680">search_protocols</text>
+  <rect class="tool" x="620" y="660" width="228" height="30" rx="5"/>
+  <text class="t monow" x="630" y="680">plan_experiment · summarize</text>
+  <path class="flowb" d="M615,484 L615,514"/>
 
-  <rect class="panel" x="610" y="395" width="230" height="155" rx="8"/>
-  <rect class="tool" x="630" y="416" width="190" height="52" rx="6"/>
-  <text class="white" x="646" y="449">Protocol + Plan</text>
-  <text class="small" x="636" y="494">Protocol search and</text>
-  <text class="small" x="636" y="518">experiment checklists</text>
+  <!-- read-back into Slack -->
+  <path class="back" d="M384,599 L165,599 L165,342"/>
+  <text class="t cap" x="52" y="640">read_slack_channel pulls the real</text>
+  <text class="t cap" x="52" y="658">conversation through Slack&#8217;s Web API,</text>
+  <text class="t cap" x="52" y="676">so nobody has to paste it in.</text>
 
-  <rect class="panel" x="875" y="395" width="230" height="155" rx="8"/>
-  <rect class="tool" x="895" y="416" width="190" height="52" rx="6"/>
-  <text class="white" x="927" y="449">Summarizer</text>
-  <text class="small" x="901" y="494">Condense noisy lab</text>
-  <text class="small" x="901" y="518">status updates</text>
+  <!-- reply path -->
+  <path class="flow" d="M640,206 L600,206 L600,130 L292,130"/>
+  <text class="t cap" x="330" y="122">Block Kit reply, in-thread,</text>
+  <text class="t cap" x="330" y="104">footed with the MCP tools used</text>
 
-  <path class="bus" d="M195 550 V590 H600"/>
-  <path class="bus" d="M460 550 V590 H600"/>
-  <path class="bus" d="M725 550 V590 H600"/>
-  <path class="bus" d="M990 550 V590 H600"/>
-  <path class="arrow" d="M600 590 V610"/>
-
-  <rect class="panel" x="300" y="610" width="600" height="56" rx="8"/>
-  <rect class="mcp" x="320" y="620" width="160" height="36" rx="6"/>
-  <text class="whiteSmall" x="350" y="643">MCP Server</text>
-  <text class="small" x="500" y="643">MCP-compatible clients can call the same tools</text>
+  <!-- explicit arrowheads (SVG markers are dropped by some renderers) -->
+  <polygon points="354,242 344,237 344,247" fill="#8892a4"/>
+  <polygon points="634,242 624,237 624,247" fill="#8892a4"/>
+  <polygon points="292,130 302,125 302,135" fill="#8892a4"/>
+  <polygon points="914,242 904,237 904,247" fill="#b0b8c5"/>
+  <polygon points="615,398 610,388 620,388" fill="#5b3cc4"/>
+  <polygon points="615,514 610,504 620,504" fill="#5b3cc4"/>
+  <polygon points="165,342 160,352 170,352" fill="#2e7d32"/>
 </svg>

@@ -1,6 +1,13 @@
-"""Core LabSignal agent logic, independent from Slack transport."""
+"""LabSignal's entry point: Claude reasoning over MCP tools, with a rule-based fallback.
+
+When an Anthropic key is configured, every request is answered by Claude choosing
+tools from the MCP server. Without one, LabSignal degrades to the deterministic
+keyword router below -- less capable, but it still answers and costs nothing.
+"""
 
 from __future__ import annotations
+
+import logging
 
 from .knowledge import search_protocols
 from .tools import (
@@ -8,19 +15,41 @@ from .tools import (
     detect_risks,
     extract_action_items,
     format_actions,
+    format_demo_card,
     format_plan,
     format_protocols,
-    format_demo_card,
     format_research_brief,
     format_risks,
     plan_experiment,
     summarize_update,
 )
 
+log = logging.getLogger(__name__)
+
 
 class LabSignalAgent:
-    def respond(self, text: str) -> str:
+    def __init__(self, brain=None) -> None:
+        self._brain = brain
+
+    @property
+    def is_reasoning(self) -> bool:
+        return self._brain is not None
+
+    def respond(self, text: str, channel_id: str | None = None) -> tuple[str, list[str]]:
+        """Answer a request. Returns the reply text and the MCP tools used (if any)."""
         cleaned = _strip_bot_mention(text)
+
+        if self._brain is not None and cleaned:
+            try:
+                return self._brain.respond(cleaned, channel_id)
+            except Exception:
+                log.exception("Claude/MCP path failed; falling back to the rule-based router")
+
+        return (self._route(cleaned), [])
+
+    # -- deterministic fallback -------------------------------------------
+
+    def _route(self, cleaned: str) -> str:
         lower = cleaned.lower()
 
         if lower in {"demo", "help", "menu", ""}:
@@ -31,24 +60,20 @@ class LabSignalAgent:
             return format_actions(extract_action_items(body))
 
         if lower.startswith("brief") or lower.startswith("handoff"):
-            body = cleaned.partition(" ")[2]
-            return format_research_brief(build_research_brief(body))
+            return format_research_brief(build_research_brief(cleaned.partition(" ")[2]))
 
         if lower.startswith("risks") or lower.startswith("risk"):
-            body = cleaned.partition(" ")[2]
-            return format_risks(detect_risks(body))
+            return format_risks(detect_risks(cleaned.partition(" ")[2]))
 
         if lower.startswith("plan") or lower.startswith("checklist"):
-            query = cleaned.partition(" ")[2]
-            return format_plan(plan_experiment(query))
+            return format_plan(plan_experiment(cleaned.partition(" ")[2]))
 
         if lower.startswith("protocol") or "protocol" in lower or "sop" in lower:
             query = cleaned.partition(" ")[2] if lower.startswith("protocol") else cleaned
             return format_protocols(search_protocols(query))
 
         if lower.startswith("summarize") or lower.startswith("summary"):
-            body = cleaned.partition(" ")[2]
-            return f"Summary: {summarize_update(body)}"
+            return f"Summary: {summarize_update(cleaned.partition(' ')[2])}"
 
         return (
             "I can help with `brief`, `actions`, `risks`, `plan`, `protocol`, or `summarize`.\n"

@@ -1,7 +1,7 @@
 [project]
 name = "labsignal"
 version = "0.1.0"
-description = "Slack research operations agent with MCP-compatible tools"
+description = "Slack research-ops agent: Claude reasoning over an MCP tool server"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
@@ -12,6 +12,7 @@ dependencies = [
     "python-dotenv>=1.0",
     "pydantic>=2.6",
     "mcp>=1.2",
+    "anthropic[mcp]>=0.116",
 ]
 
 [project.optional-dependencies]
