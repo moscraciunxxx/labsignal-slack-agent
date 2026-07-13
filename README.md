@@ -65,23 +65,32 @@ never invited to the channel rather than guessing at content.
 
 ## Quickstart
 
-```bash
-python -m venv .venv
-.\.venv\Scripts\activate
-pip install -r requirements.txt
-copy .env.example .env    # add SLACK_BOT_TOKEN, SLACK_APP_TOKEN, ANTHROPIC_API_KEY
+From an Anaconda Prompt:
 
-$env:PYTHONPATH="src"
-python -m labsignal.slack_app
+```
+conda create -n labsignal python=3.12 -y
+conda activate labsignal
+cd "D:\Coding Compete\2026-07-13_Slack-Agent-Builder-Challenge"
+pip install -e .
+copy .env.example .env
 ```
 
-Try the agent loop without Slack — this spawns the MCP server and runs the same
+Then put your `SLACK_BOT_TOKEN`, `SLACK_APP_TOKEN`, and `ANTHROPIC_API_KEY` in `.env`,
+and leave `LABSIGNAL_FORCE_LOCAL=0`. Run the Slack app:
+
+```
+labsignal-slack
+```
+
+Try the agent loop without Slack first — this spawns the MCP server and runs the same
 Claude tool-selection path the Slack app uses:
 
-```bash
-python -m labsignal.cli "Alice will QC CA1 Neuropixels recordings by Friday. Two channels are saturated. What should the next shift know?" --verbose
-python -m labsignal.cli "who owes what on the CA1 session?" --channel C0123456789
 ```
+labsignal "Alice will QC CA1 Neuropixels recordings by Friday. Two channels are saturated. What should the next shift know?" --verbose
+labsignal "who owes what on the CA1 session?" --channel C0123456789
+```
+
+A healthy run prints the MCP tools Claude chose, e.g. `[MCP tools called: build_research_brief]`.
 
 ## Running without an Anthropic key
 
@@ -92,9 +101,8 @@ the part Claude and MCP do.
 
 ## Tests
 
-```bash
-$env:PYTHONPATH="src"
-python -m pytest tests -q
+```
+pytest -q
 ```
 
 The suite spawns the real MCP server over stdio and round-trips a tool call through

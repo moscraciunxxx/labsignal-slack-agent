@@ -22,6 +22,15 @@ dev = ["pytest>=8.0"]
 package-dir = {"" = "src"}
 packages = ["labsignal"]
 
+[project.scripts]
+labsignal = "labsignal.cli:main"
+labsignal-slack = "labsignal.slack_app:main"
+
+[tool.pytest.ini_options]
+# Works from a source checkout without setting PYTHONPATH.
+pythonpath = ["src"]
+testpaths = ["tests"]
+
 [build-system]
 requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
