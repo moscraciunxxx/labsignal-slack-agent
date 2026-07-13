@@ -6,8 +6,8 @@ features:
   bot_user:
     display_name: LabSignal
     always_online: true
-  assistant_view:
-    assistant_description: Turns lab chatter into handoffs, action items, risk flags, and protocol answers.
+  agent_view:
+    agent_description: Turns lab chatter into handoffs, action items, risk flags, and protocol answers.
     suggested_prompts:
       - title: Hand off this channel
         message: Read this channel and build me a handoff brief for the next shift.
@@ -35,8 +35,8 @@ settings:
   event_subscriptions:
     bot_events:
       - app_mention
-      - assistant_thread_started
-      - assistant_thread_context_changed
+      - app_home_opened          # Agent view: replaces assistant_thread_started
+      - app_context_changed      # Agent view: replaces assistant_thread_context_changed
       - message.im
   interactivity:
     is_enabled: true

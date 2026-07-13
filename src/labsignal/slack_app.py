@@ -1,10 +1,17 @@
-"""Slack Socket Mode app: assistant threads, channel mentions, and a slash command."""
+"""Slack Socket Mode app: the Agent surface, channel mentions, and a slash command.
+
+Slack's Agent messaging experience (agent_view) replaced the older Assistant one:
+`app_home_opened` + `app_context_changed` stand in for `assistant_thread_started` +
+`assistant_thread_context_changed`, and agent DMs behave like ordinary messages.
+Bolt's `Assistant` container is built for the legacy events, so the handlers below
+are wired directly instead.
+"""
 
 from __future__ import annotations
 
 import logging
 
-from slack_bolt import App, Assistant
+from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 
 from .agent import LabSignalAgent
@@ -72,23 +79,61 @@ def build_agent(config: Config) -> LabSignalAgent:
 
 def build_app(config: Config, agent: LabSignalAgent) -> App:
     app = App(token=config.slack_bot_token)
-    assistant = Assistant()
 
-    @assistant.thread_started
-    def greet(say, set_suggested_prompts):
-        say(GREETING)
-        set_suggested_prompts(prompts=SUGGESTED_PROMPTS)
+    # Which channel each user was looking at when they opened the agent. Slack sends
+    # this separately from the message, and it is what lets read_slack_channel know
+    # which conversation "this channel" refers to.
+    channel_context: dict[str, str] = {}
 
-    @assistant.user_message
-    def handle_assistant_message(payload, say, set_status, get_thread_context):
-        set_status("is reading the lab's Slack...")
-        # In an assistant thread the user is "in" whatever channel they opened it from;
-        # that context is what lets read_slack_channel find the right conversation.
-        context = get_thread_context() or {}
-        text, tools_used = agent.respond(payload.get("text", ""), context.get("channel_id"))
-        say(text=_fallback(text), blocks=answer_blocks(text, tools_used))
+    @app.event("app_context_changed")
+    def remember_context(event, logger):
+        context = event.get("context") or {}
+        user_id = event.get("user") or context.get("user_id")
+        channel_id = context.get("channel_id")
+        if user_id and channel_id:
+            channel_context[user_id] = channel_id
+            logger.info("context: %s is looking at %s", user_id, channel_id)
 
-    app.assistant(assistant)
+    @app.event("app_home_opened")
+    def greet(event, client, logger):
+        if event.get("tab") != "messages":
+            return  # the Home tab is a different surface; only greet in Messages
+        channel_id = event.get("channel")
+        if not channel_id:
+            return
+        client.chat_postMessage(channel=channel_id, text=GREETING)
+        try:
+            client.assistant_threads_setSuggestedPrompts(
+                channel_id=channel_id,
+                thread_ts=event.get("event_ts"),
+                prompts=SUGGESTED_PROMPTS,
+            )
+        except Exception as error:
+            # Cosmetic only -- the agent is fully usable by typing. Never let this
+            # take the app down.
+            logger.warning("could not set suggested prompts: %s", error)
+
+    @app.event("message")
+    def handle_dm(event, client, say, logger):
+        # Agent DMs arrive as ordinary messages under agent_view.
+        if event.get("channel_type") != "im":
+            return
+        if event.get("bot_id") or event.get("subtype"):
+            return  # never answer ourselves
+
+        thread_ts = event.get("thread_ts") or event.get("ts")
+        try:
+            client.assistant_threads_setStatus(
+                channel_id=event["channel"],
+                thread_ts=thread_ts,
+                status="is reading the lab's Slack...",
+            )
+        except Exception:
+            pass  # status is a nicety, not a requirement
+
+        user_channel = channel_context.get(event.get("user", ""))
+        text, tools_used = agent.respond(event.get("text", ""), user_channel)
+        say(text=_fallback(text), blocks=answer_blocks(text, tools_used), thread_ts=thread_ts)
 
     @app.event("app_mention")
     def handle_mention(event, say):
