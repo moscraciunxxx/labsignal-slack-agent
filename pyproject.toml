@@ -13,6 +13,7 @@ dependencies = [
     "pydantic>=2.6",
     "mcp>=1.2",
     "anthropic[mcp]>=0.116",
+    "openai>=1.60",           # xAI is OpenAI-wire-compatible; used for the Grok path
 ]
 
 [project.optional-dependencies]

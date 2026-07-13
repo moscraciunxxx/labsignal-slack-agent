@@ -26,8 +26,12 @@ LabSignal reads that conversation and gives back the handoff.
 
 LabSignal has no hardcoded command router in its main path. The Slack app is an **MCP
 client**: at startup it spawns `labsignal.mcp_server` over stdio, discovers the tool
-schemas, and hands them to Claude, which decides what to call and in what order.
+schemas, and hands them to the model, which decides what to call and in what order.
 Remove the MCP server and the agent has no capabilities at all.
+
+The model is swappable — set `XAI_API_KEY` to reason with **Grok 4.3**, or
+`ANTHROPIC_API_KEY` for **Claude Opus 4.8**. That choice changes nothing structural:
+either way the tools come from MCP and the model, not the code, decides the chain.
 
 That is what lets a researcher ask a question in their own words instead of learning a
 command grammar. "Who still owes me something on the CA1 session?" makes Claude call
@@ -75,8 +79,8 @@ pip install -e .
 copy .env.example .env
 ```
 
-Then put your `SLACK_BOT_TOKEN`, `SLACK_APP_TOKEN`, and `ANTHROPIC_API_KEY` in `.env`,
-and leave `LABSIGNAL_FORCE_LOCAL=0`. Run the Slack app:
+Then put your `SLACK_BOT_TOKEN`, `SLACK_APP_TOKEN`, and one model key (`XAI_API_KEY`
+or `ANTHROPIC_API_KEY`) in `.env`, and leave `LABSIGNAL_FORCE_LOCAL=0`. Run the Slack app:
 
 ```
 labsignal-slack

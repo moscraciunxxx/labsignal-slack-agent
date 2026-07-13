@@ -43,18 +43,31 @@ GREETING = (
 
 
 def build_agent(config: Config) -> LabSignalAgent:
-    """Wire Claude to the MCP server, or fall back to the deterministic router."""
+    """Wire a model to the MCP server, or fall back to the deterministic router."""
     if not config.reasoning_ready:
         log.warning(
-            "ANTHROPIC_API_KEY not set (or LABSIGNAL_FORCE_LOCAL=1). "
-            "Running the rule-based fallback; Claude and MCP are disabled."
+            "No ANTHROPIC_API_KEY or XAI_API_KEY (or LABSIGNAL_FORCE_LOCAL=1). "
+            "Running the rule-based fallback; the model and MCP are disabled."
         )
         return LabSignalAgent()
 
     mcp = MCPToolSession()
     mcp.start()
-    log.info("Claude (%s) reasoning over MCP tools: %s", config.model, mcp.tool_names())
-    return LabSignalAgent(ClaudeBrain(mcp, config.anthropic_api_key, config.model))
+
+    if config.provider == "anthropic":
+        brain = ClaudeBrain(mcp, config.api_key, config.model)
+    else:
+        from .brain_grok import GrokBrain
+
+        brain = GrokBrain(mcp, config.api_key, config.model)
+
+    log.info(
+        "%s (%s) reasoning over MCP tools: %s",
+        config.provider,
+        config.model,
+        mcp.tool_names(),
+    )
+    return LabSignalAgent(brain)
 
 
 def build_app(config: Config, agent: LabSignalAgent) -> App:

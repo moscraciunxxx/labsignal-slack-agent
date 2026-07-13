@@ -4,4 +4,5 @@ python-dotenv>=1.0
 pydantic>=2.6
 mcp>=1.2
 anthropic[mcp]>=0.116
+openai>=1.60
 pytest>=8.0
