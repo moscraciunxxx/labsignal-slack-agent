@@ -81,8 +81,11 @@ def test_agent_reports_the_tools_the_brain_used():
 def test_agent_falls_back_when_the_brain_fails():
     class BrokenBrain:
         def respond(self, question, channel_id=None):
-            raise RuntimeError("Anthropic API is down")
+            raise RuntimeError("the model API is down")
 
     text, tools_used = LabSignalAgent(BrokenBrain()).respond("plan ca1 neuropixels qc")
     assert "CA1 Neuropixels" in text
     assert tools_used == []
+    # A degraded answer must announce itself -- otherwise it is indistinguishable
+    # from a reasoned one, and a dead model looks like a working demo.
+    assert "keyword-matched" in text

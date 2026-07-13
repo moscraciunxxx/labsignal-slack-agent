@@ -43,7 +43,15 @@ class LabSignalAgent:
             try:
                 return self._brain.respond(cleaned, channel_id)
             except Exception:
-                log.exception("Claude/MCP path failed; falling back to the rule-based router")
+                # Degrade, but say so. A silent fallback is indistinguishable from a
+                # real answer, which is how a demo dies without anyone noticing.
+                log.exception("model/MCP path failed; falling back to the rule-based router")
+                return (
+                    ":warning: _I couldn't reach my model just now, so this is a "
+                    "keyword-matched answer rather than a reasoned one._\n\n"
+                    + self._route(cleaned),
+                    [],
+                )
 
         return (self._route(cleaned), [])
 

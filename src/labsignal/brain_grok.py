@@ -25,7 +25,14 @@ class GrokBrain:
     def __init__(self, mcp: MCPToolSession, api_key: str, model: str) -> None:
         self._mcp = mcp
         self._model = model
-        self._client = AsyncOpenAI(api_key=api_key, base_url=XAI_BASE_URL)
+        # Retry hard: a dropped connection would otherwise surface as the keyword
+        # fallback, which reads like a correct answer rather than a failure.
+        self._client = AsyncOpenAI(
+            api_key=api_key,
+            base_url=XAI_BASE_URL,
+            max_retries=5,
+            timeout=90.0,
+        )
 
     def respond(self, question: str, channel_id: str | None = None) -> tuple[str, list[str]]:
         return self._mcp.run(self._answer(question, channel_id))
@@ -54,12 +61,17 @@ class GrokBrain:
         ]
 
         called: list[str] = []
-        for _ in range(MAX_STEPS):
+        for step in range(MAX_STEPS):
+            # The agent knows nothing about the lab except what its tools return, so it
+            # must consult at least one before answering. Left on "auto", Grok will
+            # sometimes reply from an empty context -- which reads as confident invention.
+            # After the first call it can decide for itself when it is done.
+            tool_choice = "required" if step == 0 else "auto"
             response = await self._client.chat.completions.create(
                 model=self._model,
                 messages=messages,
                 tools=tools,
-                tool_choice="auto",
+                tool_choice=tool_choice,
             )
             message = response.choices[0].message
             if not message.tool_calls:
